@@ -1,0 +1,5 @@
+streamlit
+streamlit-extras
+requests
+numpy
+google-generativeai
