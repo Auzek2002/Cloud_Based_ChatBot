@@ -9,7 +9,7 @@ import os
 
 
 
-genai.configure(api_key="AIzaSyDqXlh83m8LivN-Nt2FeVVNUdTpvMqSwfk")     #Add Your API Key here
+genai.configure(api_key="AIzaSyDqXlh83m8LivN-Nt2FeVVNUdTpvMqSwfk")    
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def genAnswer(prompt):
