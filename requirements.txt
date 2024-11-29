@@ -4,3 +4,7 @@ requests
 numpy
 google-generativeai
 azure-cosmos
+cvzone
+opencv-python-headless
+mediapipe
+Pillow
