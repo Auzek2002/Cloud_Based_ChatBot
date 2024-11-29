@@ -1,9 +1,7 @@
-import json
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-import requests
-from azure.cosmos import CosmosClient, exceptions
 import uuid
+from azure.cosmos import CosmosClient, exceptions
 
 # Replace with your Cosmos DB credentials
 COSMOS_URI = "https://icc-project.documents.azure.com:443/"
@@ -47,57 +45,51 @@ def signup(username, password):
     except exceptions.CosmosHttpResponseError as e:
         return {"status": "error", "message": str(e)}
 
-
-st.markdown("""
-    <style>
-        section[data-testid="stSidebar"][aria-expanded="true"]{
-            display: none;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-# Define the valid username and password
-# valid_username = "user"
-# valid_password = "password"
+# Check if the user is already logged in via session state
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
 # Page title
 st.title("Login/Sign Up Page")
 
-# Display the login form
-username = st.text_input("Username")
-password = st.text_input("Password", type="password")
+# If user is logged in, show the content for logged-in users
+if st.session_state.logged_in:
+    # Show Sidebar
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Choose a page", ["Chat", "Draw"])
 
-# Check if the user clicked the "Login" button
-if st.button("Login"):
-    response = login(username, password)
-    if response["status"] == "success":
-        st.success(response["message"])
-        st.markdown("""
-            <style>
-                section[data-testid="stSidebar"][aria-expanded="true"]{
-                    display: block;
-                }
-            </style>
-        """, unsafe_allow_html=True)
-    else:
-        st.error(response["message"])
+    if page == "Chat":
+        switch_page("chat")
+    elif page == "Draw":
+        switch_page("draw")
+else:
+    # Display the login form
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
-
-# Display a sign-up form
-st.write("Don't have an account? Sign up below.")
-new_username = st.text_input("New Username")
-new_password = st.text_input("New Password", type="password")
-confirm_password = st.text_input("Confirm Password", type="password")
-
-# Check if the user clicked the "Sign Up" button
-if st.button("Sign Up"):
-    if new_password == confirm_password:
-        response = signup(new_username, new_password)
+    # Check if the user clicked the "Login" button
+    if st.button("Login"):
+        response = login(username, password)
         if response["status"] == "success":
             st.success(response["message"])
+            st.session_state.logged_in = True  # Set the session to logged-in
+            st.experimental_rerun()  # Re-run to show the sidebar and navigate
         else:
             st.error(response["message"])
-    else:
-        st.error("Passwords do not match. Please try again.")
 
+    # Display a sign-up form
+    st.write("Don't have an account? Sign up below.")
+    new_username = st.text_input("New Username")
+    new_password = st.text_input("New Password", type="password")
+    confirm_password = st.text_input("Confirm Password", type="password")
 
-
+    # Check if the user clicked the "Sign Up" button
+    if st.button("Sign Up"):
+        if new_password == confirm_password:
+            response = signup(new_username, new_password)
+            if response["status"] == "success":
+                st.success(response["message"])
+            else:
+                st.error(response["message"])
+        else:
+            st.error("Passwords do not match. Please try again.")
