@@ -48,7 +48,7 @@ if "logged_in" not in st.session_state:
 # Page title
 st.title("Login/Sign Up Page")
 
-# Display sidebar navigation
+# Display sidebar navigation if logged in
 if st.session_state.logged_in:
     # Show the sidebar for navigation after login
     page = st.sidebar.radio("Choose a page", ["Chat", "Draw"])
@@ -56,11 +56,9 @@ if st.session_state.logged_in:
     # Switch between pages based on selection
     if page == "Chat":
         # Assuming you have a 1_Chat.py in your Pages folder
-        st.experimental_rerun()  # This will re-run and show the Chat page
         st.write("Welcome to the Chat page!")
     elif page == "Draw":
         # Assuming you have a 2_Draw.py in your Pages folder
-        st.experimental_rerun()  # This will re-run and show the Draw page
         st.write("Welcome to the Draw page!")
 else:
     # Display the login form if the user is not logged in
@@ -73,7 +71,7 @@ else:
         if response["status"] == "success":
             st.success(response["message"])
             st.session_state.logged_in = True  # Set the session to logged-in
-            st.experimental_rerun()  # Re-run to show the sidebar and navigate
+            st.rerun()  # Re-run to show the sidebar and navigate
         else:
             st.error(response["message"])
 
