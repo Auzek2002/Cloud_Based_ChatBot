@@ -3,3 +3,4 @@ streamlit-extras
 requests
 numpy
 google-generativeai
+azure-cosmos
