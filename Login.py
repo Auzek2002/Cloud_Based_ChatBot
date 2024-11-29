@@ -1,7 +1,6 @@
 import streamlit as st
-from streamlit_extras.switch_page_button import switch_page
-import uuid
 from azure.cosmos import CosmosClient, exceptions
+import uuid
 
 # Replace with your Cosmos DB credentials
 COSMOS_URI = "https://icc-project.documents.azure.com:443/"
@@ -14,7 +13,6 @@ client = CosmosClient(COSMOS_URI, COSMOS_KEY)
 database = client.get_database_client(DATABASE_NAME)
 container = database.get_container_client(CONTAINER_NAME)
 
-
 def login(username, password):
     try:
         # Query for user
@@ -24,10 +22,8 @@ def login(username, password):
             return {"status": "success", "message": "Login successful."}
         else:
             return {"status": "error", "message": "Invalid username or password."}
-
     except exceptions.CosmosHttpResponseError as e:
         return {"status": "error", "message": str(e)}
-
 
 def signup(username, password):
     try:
@@ -52,18 +48,22 @@ if "logged_in" not in st.session_state:
 # Page title
 st.title("Login/Sign Up Page")
 
-# If user is logged in, show the content for logged-in users
+# Display sidebar navigation
 if st.session_state.logged_in:
-    # Show Sidebar
-    st.sidebar.title("Navigation")
+    # Show the sidebar for navigation after login
     page = st.sidebar.radio("Choose a page", ["Chat", "Draw"])
 
+    # Switch between pages based on selection
     if page == "Chat":
-        switch_page("chat")
+        # Assuming you have a 1_Chat.py in your Pages folder
+        st.experimental_rerun()  # This will re-run and show the Chat page
+        st.write("Welcome to the Chat page!")
     elif page == "Draw":
-        switch_page("draw")
+        # Assuming you have a 2_Draw.py in your Pages folder
+        st.experimental_rerun()  # This will re-run and show the Draw page
+        st.write("Welcome to the Draw page!")
 else:
-    # Display the login form
+    # Display the login form if the user is not logged in
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
 
