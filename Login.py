@@ -8,10 +8,17 @@ import math
 import numpy as np
 import google.generativeai as genai
 import os
+import cvzone
+from cvzone.HandTrackingModule  import HandDetector
+import cv2
+from dotenv import load_dotenv
+import mediapipe as mp
+from PIL import Image
 
+load_dotenv()
 # Replace with your Cosmos DB credentials
-COSMOS_URI = "https://icc-project.documents.azure.com:443/"
-COSMOS_KEY = "Wqb4X2RwLti3B5IDYrwATzGTws2phkbT5vYCWtiYgtKBR2JgAeXWPTaQkMXBaaaHkOplmLXzE1whACDbNQp2ig=="
+COSMOS_URI = os.getenv("COSMOS_URI")
+COSMOS_KEY = os.getenv("COSMOS_KEY")
 DATABASE_NAME = "myDatabase"
 CONTAINER_NAME = "Users"
 
@@ -56,7 +63,7 @@ if "logged_in" not in st.session_state:
 # Display sidebar navigation if logged in
 if st.session_state.logged_in:
     # Show the sidebar for navigation after login
-    page = st.sidebar.radio("Choose a page", ["Chat"])
+    page = st.sidebar.radio("Choose a page", ["Chat", "Login"])
 
     # Switch between pages based on selection
     if page == "Chat":
@@ -109,6 +116,39 @@ if st.session_state.logged_in:
             st.session_state.messages.append({"role" : "assistant", "content" : answer})
             with st.chat_message("assistant"):
                 st.write(answer)
+    elif page == "Login":
+
+        # Display the login form if the user is not logged in
+        st.title("Login/Sign Up")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        # Check if the user clicked the "Login" button
+        if st.button("Login"):
+            response = login(username, password)
+            if response["status"] == "success":
+                st.success(response["message"])
+                st.session_state.logged_in = True  # Set the session to logged-in
+                st.rerun()  # Re-run to show the sidebar and navigate
+            else:
+                st.error(response["message"])
+
+        # Display a sign-up form
+        st.write("Don't have an account? Sign up below.")
+        new_username = st.text_input("New Username")
+        new_password = st.text_input("New Password", type="password")
+        confirm_password = st.text_input("Confirm Password", type="password")
+
+        # Check if the user clicked the "Sign Up" button
+        if st.button("Sign Up"):
+            if new_password == confirm_password:
+                response = signup(new_username, new_password)
+                if response["status"] == "success":
+                    st.success(response["message"])
+                else:
+                    st.error(response["message"])
+            else:
+                st.error("Passwords do not match. Please try again.")
 else:
     # Display the login form if the user is not logged in
     st.title("Login/Sign Up")
