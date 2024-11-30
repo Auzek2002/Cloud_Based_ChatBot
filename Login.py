@@ -8,12 +8,6 @@ import math
 import numpy as np
 import google.generativeai as genai
 import os
-import cvzone
-from cvzone.HandTrackingModule  import HandDetector
-import cv2
-from dotenv import load_dotenv
-import mediapipe as mp
-from PIL import Image
 
 load_dotenv()
 # Replace with your Cosmos DB credentials
