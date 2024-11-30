@@ -9,7 +9,6 @@ import numpy as np
 import google.generativeai as genai
 import os
 
-load_dotenv()
 # Replace with your Cosmos DB credentials
 COSMOS_URI = os.getenv("COSMOS_URI")
 COSMOS_KEY = os.getenv("COSMOS_KEY")
